@@ -1,6 +1,6 @@
 # Endereçamento e Encaminhamento (Camada de Rede)
 
-Por **[Arthur Zopellaro](https://github.com/arthurazs)** e **Tatiane Sousa.**
+Por **[Arthur Zopellaro](https://github.com/arthurazs)** e **[Tatiane Sousa](http://lattes.cnpq.br/5392435833953521).**
 
 **Conteúdo**
 
@@ -23,6 +23,11 @@ Por **[Arthur Zopellaro](https://github.com/arthurazs)** e **Tatiane Sousa.**
         - [Detectando o erro](#detectando-o-erro)
         - [Finalizando a simulação](#finalizando-a-simulação)
     - [Experimento 2 *(NAT)*](#experimento-2-nat)
+        - [Testando a rede](#testando-a-rede2)
+        - [Solucionando o problema](#solucionando-o-problema)
+        - [Permitindo o acesso à rede local](#permitindo-o-acesso-à-rede-local)
+        - [Analisando a rota](#analisando-a-rota)
+        - [Finalizando a simulação](#finalizando-a-simulação2)
 - [Considerações Finais](#considerações-finais)
 
 ## Objetivo Geral
@@ -31,7 +36,7 @@ Este laboratório tem por objetivo aplicar os conceitos de Endereçamento e Enca
 
 ## Objetivo Específico
 
-O laboratório irá demonstrar a criação de redes de computadores e a comunicação entre os nós de redes, exemplificando a utilização de: Endereço IP, Máscara sub-rede, Gateway e Rota Default, CIDR, NAT e ICMP. O tráfego gerado na simulação das redes serão analisados.
+O laboratório irá demonstrar a criação de redes de computadores e a comunicação entre os nós de redes, exemplificando a utilização de: Endereço IP, Máscara sub-rede, Gateway e Rota Default, CIDR, NAT e ICMP. O tráfego gerado na simulação das redes será analisado.
 
 ## Metodologia
 
@@ -55,7 +60,7 @@ Para finalizar, utilizaremos um exemplo mais complexo que irá introduzir o conc
 
 ![Representação da rede simulada no Experimento 2](/imagens/experimento2.jpg)
 
-Os alunos irão configurar a conexão entre uma rede local e a internet. O programa ***Wireshark*** será utilizado em diversas etapas deste experimento para auxiliar na detecção dos problemas envolvidos na comunicação entre uma máquina com IP privado (rede local) e uma máquina com IP público (internet). Serão analisados as mensagens enviados entre as máquinas utilizando os protocolos **ICMP** de **ping** e **traceroute**.
+Os alunos irão configurar a conexão entre uma rede local e a internet. O programa ***Wireshark*** será utilizado em diversas etapas deste experimento para auxiliar na detecção dos problemas envolvidos na comunicação entre uma máquina com IP privado (rede local) e uma máquina com IP público (internet). Serão analisadas as mensagens enviadas entre as máquinas utilizando os protocolos **ICMP** de **ping** e **traceroute**.
 
 ## Ambiente
 
@@ -140,7 +145,7 @@ Este é um cenário simples com 4 máquinas interligadas por um hub, havendo com
         lab.dep   MAQUINA2          MAQUINA3.startup
         MAQUINA1  MAQUINA2.startup  MAQUINA4
 
-    O arquivo **lab.conf** contém informações gerais sobre a simulação, enquanto cada pasta **MAQUINAX** contém informações sobre a interface de rede. Os arquivos **MAQUINAX.startup** reconfigura a interface de rede da máquina para receber as configurações atualizadas. O arquivo **lab.dep** permite a inicialização paralela das máquinas para agilizar o processo.
+    O arquivo **lab.conf** contém informações gerais sobre a simulação, enquanto cada pasta **MAQUINAX** contém informações sobre a interface de rede. Os arquivos **MAQUINAX.startup** reconfiguram a interface de rede da máquina para receber as configurações atualizadas. O arquivo **lab.dep** permite a inicialização paralela das máquinas para agilizar o processo.
 
 4. Inicie o experimento com o comando `lstart`:
 
@@ -236,6 +241,239 @@ Este é um cenário simples com 4 máquinas interligadas por um hub, havendo com
 ---
 
 ###  Experimento 2 *(NAT)*
+
+Este é um cenário mais complexo que irá introduzir o conceito de **NAT**. O objetivo deste cenário é exemplificar os problemas enfrentados para conectar uma máquina local com a internet e vice-versa.
+
+![Representação da rede simulada](/imagens/experimento2.jpg)
+
+Todas as máquinas são inicializadas com dois usuários:
+
+- Usuário: aluno / Senha: alu01
+- Usuário: professor / Senha: pro01
+
+#### Executando a simulação [executando-a-simulação2]
+
+1. Baixe o [experimento2.zip](/arquivos/experimento2.zip) e descompacte o arquivo dentro da pasta `/home/usuario/laboratorio/` criada anteriormente no [Experimento 1].
+2. No terminal, entre na pasta **experimento2**:
+
+        $ cd
+        $ cd laboratorio/experimento2/
+        $ ls
+        EMPRESA1          EMPRESA3          lab.conf          SERVIDOR
+        EMPRESA1.startup  EMPRESA3.startup  lab.dep           SERVIDOR.startup
+        EMPRESA2          INTERNET          ROTEADOR          shared
+        EMPRESA2.startup  INTERNET.startup  ROTEADOR.startup  shared.startup
+
+    As pastas **EMPRESA3** e **SERVIDOR** contêm um arquivo de configuração para um servidor FTP.
+    Os arquivos ***.startup** apresentam outra maneira de inicializar a interface de rede de cada máquina.
+    O arquivo **shared.startup** cria os usuários **aluno** e **professor** em todas as máquinas.
+
+3. Inicie o experimento com o comando `lstart`:
+
+        $ lstart
+        ======================== Starting lab ===========================
+        Lab directory: /home/arthurazs/laboratorio/experimento2
+        Version:       1.0
+        Author:        Arthur Zopellaro, Tatiane Sousa
+        Email:         arthurazs@id.uff.br, tatiane.gsousa@gmail.com
+        Web:           https://arthurazs.github.io/uff-redes
+        Description:
+        Experimento 2 - NAT
+        =================================================================
+        You chose to use parallel startup.
+        Starting "ROTEADOR"...
+        Starting "SERVIDOR"...
+        Starting "INTERNET"...
+        Starting "EMPRESA3"...
+        Starting "EMPRESA2"...
+        Starting "EMPRESA1"...
+
+        The lab has been started.
+        =================================================================
+
+
+4. Cinco janelas serão abertas conforme a imagem abaixo:
+
+    ![Quatro janelas XTerm abertas](/imagens/experimento1a.png)
+
+#### Testando a rede [testando-a-rede2]
+
+1. A conexão já está configurada entre o SERVIDOR e a INTERNET. Execute um `ping` entre essas máquinas.
+
+    ![ping sendo executado do SERVIDOR para a INTERNET](/imagens/experimento2b.png)
+
+2. A conexão já está configurada na rede local: Máquinas da Empresa e o SERVIDOR. Execute um `ping` entre essas máquinas.
+
+    ![ping sendo executado do SERVIDOR para a EMPRESA1](/imagens/experimento2c.png)
+
+3. Entretanto, a rede local não consegue se comunicar com a internet e vice-versa. Execute um `ping` entre essas duas máquinas.
+
+    ![ping sendo executado da INTERNET para a EMPRESA1](/imagens/experimento2d.png)
+
+4. Para uma melhor análise, vamos capturar o tráfego. Primeiro, mude para sua pasta **local** na máquina INTERNET com o comando `cd /hosthome/laboratorio/`:
+
+    ![INTERNET acessando a pasta local](/imagens/experimento2e.png)
+
+5. Para testar melhor, iremos executar o `ping` da INTERNET para a EMPRESA1 e vice-versa enquanto capturamos o tráfego na interface da INTERNET. Para isso, execute o comando a seguir na máquina INTERNET:
+
+        # tcpdump -i eth0 -w captura2AI.pcap &
+
+    **ATENÇÃO** Não se esqueça do **&** no final para garantir que o tcpdump irá rodar em paralelo, permitindo a execução de outros comandos.
+
+6. Execute novamente um `ping` da INTERNET para a EMPRESA1 e vice-versa.
+
+7. Antes de analisarmos o tráfego, precisamos finalizar a execução paralela do tcpdump na INTERNET. Execute o comando a seguir:
+
+        # kill $(pidof tcpdump)
+
+8. Analise o tráfego de informação pelo **Wireshark** e reveja os erros apresentados no terminal da INTERNET e EMPRESA1.
+
+    Por que o `ping` da EMPRESA1 chega na INTERNET mas não consegue retornar?
+
+    Por que a INTERNET está enviando o `ping` para o ROTEADOR? Por que o ROTEADOR responde com "Destino Inacessível"?
+
+    **DICA** Execute o comando `netstat -nr` na INTERNET e no ROTEADOR.
+
+
+#### Solucionando o problema
+
+1. Para a INTERNET conseguir responder o `ping` da rede local, nós iremos utilizar o NAT.
+
+    O SERVIDOR é a ponte entre a rede local e a internet, portanto ele será o responsável em modificar os pacotes IPs das máquinas locais.
+
+2. Primeiro precisamos habilitar o encaminhamento de pacotes no SERVIDOR. Execute o comando a seguir no terminal do SERVIDOR:
+
+        # echo 1 > /proc/sys/net/ipv4/ip_forward
+
+3. Agora precisamos habilitar o NAT. Nós iremos utilizar o firewall iptables para controlar o Endereçamento e Encaminhamento dos pacotes. Execute os comandos a seguir no terminal do SERVIDOR:
+
+        # iptables -F
+        # iptables -F -t nat
+        # iptables -t nat -A POSTROUTING -o eth1 -j MASQUERADE
+
+    `-F` deleta todas as regras do iptables.
+
+    `-t nat` se refere a tabela de regras NAT.
+
+    `-A POSTROUTING` adiciona uma nova regra de pós-roteamento.
+
+    `-o eth1` especifíca para qual interface essa regra deve ser seguida.
+
+    `-j MASQUERADE` especifíca qual técnica será utilizada.
+
+4. Agora será possível completar o `ping` da EMPRESA1 para a INTERNET:
+
+    ![EMPRESA1 completando o ping](/imagens/experimento2f.png)
+
+5. Capture o tráfego na INTERNET e analise os pacotes enviados e recebidos.
+
+        # tcpdump -i eth0 -w captura2BI.pcap
+
+6. Entretanto, a INTERNET ainda não tem acesso direto à rede local.
+
+#### Permitindo o acesso à rede local
+
+1. Primeiro vamos iniciar alguns serviços para que a INTERNET possa estabelecer conexões com a rede local.
+
+    1. No SERVIDOR, execute `/etc/init.d/proftpd start`. Isso irá iniciar um servidor FTP na porta 20 do SERVIDOR.
+    2. Na EMPRESA3, execute `/etc/init.d/proftpd start`. Isso irá iniciar um servidor FTP na porta 21 da EMPRESA3.
+    3. Na EMPRESA1, execute `/etc/init.d/ssh start`. Isso irá iniciar um servidor SSH na porta 22 da EMPRESA1.
+
+2. Teste a conexão entre a INTERNET e o SERVIDOR:
+
+        # ftp 202.135.187.131 20
+
+    Em usuário, digite `aluno`. Ao ser requisitado uma senha, digite `alu01`.
+
+    ![INTERNET estabelece conexão com SERVIDOR](/imagens/experimento2g.png)
+
+3. Digite `ls` na INTERNET para verificar se está conectado no SERVIDOR com o usuário **aluno**:
+
+    ![INTERNET está conectada no SERVIDOR com o usuário aluno](/imagens/experimento2h.png)
+
+4. Digite `exit` na INTERNET para encerrar a conexão.
+
+5. Teste a conexão entre a INTERNET e a EMPRESA3:
+
+        # ftp 202.135.187.131 21
+        ftp: connect: Connection refused
+
+    A conexão não é estabelecida pois o SERVIDOR não tem nenhuma regra para encaminhar conexões.
+
+    **DÚVIDA** Então por que a conexão foi estabelecida com a porta 20?
+
+6. Devemos criar regras no iptables para encaminhar conexões:
+
+    - A porta 21 deve ser encaminhada para o IP 192.168.0.3 (FTP)
+    - A porta 22 deve ser encaminhada para o IP 192.168.0.1 (SSH)
+
+7. No SERVIDOR, execute os comandos a seguir:
+
+        # iptables -t nat -A PREROUTING -p tcp --dport 21 -j DNAT --to 192.168.0.3
+        # iptables -t nat -A PREROUTING -p tcp --dport 22 -j DNAT --to 192.168.0.1
+
+    `-A PREROUTING` adiciona uma nova regra de pré-roteamento.
+
+    `-p tcp` especifíca a regra para um único protocolo de transporte.
+
+    `--dport 21` especifíca a regra para uma única porta de destino.
+
+    `-j DNAT` especifíca NAT de destino.
+
+    `--to 192.168.0.3` especifíca para qual endereço aquela conexão será encaminhada.
+
+8. Antes de testarmos as conexões, vamos colocar a EMPRESA2 para capturar o tráfego na rede local:
+
+        # cd /hosthome/laboratorio/
+        # tcpdump -i eth0 -s 1600 -w captura2C2.pcap
+
+    `-s 1600` fixa o tamanho da captura dos dados para 1600.
+
+9. Partindo da INTERNET, estabeleça uma conexão com o FTP da EMPRESA3 e outra conexão com o SSH da EMPRESA1:
+
+        # ftp 202.135.187.131 21
+        Name (202.135.187.131:root): aluno
+        Password: alu01
+        ftp> ls
+        ftp> exit
+
+    O SSH irá pedir para confirmar a chave. Digite `yes` e aperte enter.
+
+        # ssh professor@202.135.187.131 -p 22
+        Are you sure you want to continue connecting (yes/no)? yes
+        professor@202.135.187.131's password: pro01
+        $ ls
+        $ exit
+
+10. Volte na INTERNET, finalize o tcpdump com `CTRL + C` e analise o tráfego capturado no arquivo `captura2C2.pcap`.
+
+#### Analisando a rota
+
+Com tudo configurado, podemos analisar a rota que a EMPRESA1 utiliza para chegar na INTERNET.
+
+1. Configure o SERVIDOR para capturar o tráfego na interface eth0:
+
+        # cd /hosthome/laboratorio/
+        # tcpdump -i eth0 -w captura2DS.pcap
+
+    `-i any` permite a captura em todas as interfaces.
+
+2. Na EMPRESA1, execute os dois comandos a seguir para traçar a rota até a INTERNET:
+
+        # traceroute 143.102.212.100
+        # tracert 143.102.212.100
+
+    Qual a diferença na resposta dos dois comandos?
+
+3. Volte na INTERNET, finalize o tcpdump com `CTRL + C` e analise o tráfego capturado no arquivo `captura2DS.pcap`.
+
+    Qual a diferença entre o `traceroute` e o `tracert`?
+
+#### Finalizando a simulação [finalizando-a-simulação2]
+
+1. Para encerrar a simulação, digite `lhalt` em seu terminal **local**:
+
+2. *OPCIONAL* Caso o comando `lhalt` não funcione, utilize o comando `lcrash`:
 
 ## Considerações Finais
 
