@@ -23,11 +23,12 @@ Por **[Arthur Zopellaro](https://github.com/arthurazs)** e **[Tatiane Sousa](htt
         - [Detectando o erro](#detectando-o-erro)
         - [Finalizando a simulação](#finalizando-a-simulação)
     - [Experimento 2 *(NAT)*](#experimento-2-nat)
-        - [Testando a rede](#testando-a-rede2)
+        - [Executando a simulação](#executando-a-simulação-1)
+        - [Testando a rede](#testando-a-rede-1)
         - [Solucionando o problema](#solucionando-o-problema)
         - [Permitindo o acesso à rede local](#permitindo-o-acesso-à-rede-local)
         - [Analisando a rota](#analisando-a-rota)
-        - [Finalizando a simulação](#finalizando-a-simulação2)
+        - [Finalizando a simulação](#finalizando-a-simulação-1)
 - [Considerações Finais](#considerações-finais)
 
 ## Objetivo Geral
@@ -251,7 +252,7 @@ Todas as máquinas são inicializadas com dois usuários:
 - Usuário: aluno / Senha: alu01
 - Usuário: professor / Senha: pro01
 
-#### Executando a simulação [executando-a-simulação2]
+#### Executando a simulação
 
 1. Baixe o [experimento2.zip](/arquivos/experimento2.zip) e descompacte o arquivo dentro da pasta `/home/usuario/laboratorio/` criada anteriormente no [Experimento 1].
 2. No terminal, entre na pasta **experimento2**:
@@ -292,11 +293,11 @@ Todas as máquinas são inicializadas com dois usuários:
         =================================================================
 
 
-4. Cinco janelas serão abertas conforme a imagem abaixo:
+4. Seis janelas serão abertas conforme a imagem abaixo:
 
-    ![Quatro janelas XTerm abertas](/imagens/experimento1a.png)
+    ![Seis janelas XTerm abertas](/imagens/experimento2a.png)
 
-#### Testando a rede [testando-a-rede2]
+#### Testando a rede
 
 1. A conexão já está configurada entre o SERVIDOR e a INTERNET. Execute um `ping` entre essas máquinas.
 
@@ -365,9 +366,11 @@ Todas as máquinas são inicializadas com dois usuários:
 
     ![EMPRESA1 completando o ping](/imagens/experimento2f.png)
 
-5. Capture o tráfego na INTERNET e analise os pacotes enviados e recebidos.
+5. Capture o tráfego na INTERNET.
 
         # tcpdump -i eth0 -w captura2BI.pcap
+
+    Repita o passo 4 e analise o tráfego gerado.
 
 6. Entretanto, a INTERNET ainda não tem acesso direto à rede local.
 
@@ -375,9 +378,17 @@ Todas as máquinas são inicializadas com dois usuários:
 
 1. Primeiro vamos iniciar alguns serviços para que a INTERNET possa estabelecer conexões com a rede local.
 
-    1. No SERVIDOR, execute `/etc/init.d/proftpd start`. Isso irá iniciar um servidor FTP na porta 20 do SERVIDOR.
-    2. Na EMPRESA3, execute `/etc/init.d/proftpd start`. Isso irá iniciar um servidor FTP na porta 21 da EMPRESA3.
-    3. Na EMPRESA1, execute `/etc/init.d/ssh start`. Isso irá iniciar um servidor SSH na porta 22 da EMPRESA1.
+    1. No SERVIDOR, execute `/etc/init.d/proftpd start`.
+
+        Isso irá iniciar um servidor FTP na porta 20 do SERVIDOR.
+
+    2. Na EMPRESA3, execute `/etc/init.d/proftpd start`.
+
+        Isso irá iniciar um servidor FTP na porta 21 da EMPRESA3.
+
+    3. Na EMPRESA1, execute `/etc/init.d/ssh start`.
+
+        Isso irá iniciar um servidor SSH na porta 22 da EMPRESA1.
 
 2. Teste a conexão entre a INTERNET e o SERVIDOR:
 
@@ -456,8 +467,6 @@ Com tudo configurado, podemos analisar a rota que a EMPRESA1 utiliza para chegar
         # cd /hosthome/laboratorio/
         # tcpdump -i eth0 -w captura2DS.pcap
 
-    `-i any` permite a captura em todas as interfaces.
-
 2. Na EMPRESA1, execute os dois comandos a seguir para traçar a rota até a INTERNET:
 
         # traceroute 143.102.212.100
@@ -469,7 +478,7 @@ Com tudo configurado, podemos analisar a rota que a EMPRESA1 utiliza para chegar
 
     Qual a diferença entre o `traceroute` e o `tracert`?
 
-#### Finalizando a simulação [finalizando-a-simulação2]
+#### Finalizando a simulação
 
 1. Para encerrar a simulação, digite `lhalt` em seu terminal **local**:
 
