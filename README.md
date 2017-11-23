@@ -43,13 +43,19 @@ Primeiramente haverá um tutorial para a instalação da ferramenta **Netkit**, 
 
 ### Experimento 1
 
-![Representação da rede simulada](/imagens/experimento1.jpg)
+Em seguida, será utilizado um cenário simples com 4 máquinas interligadas por um hub, havendo comunicação apenas entre 2 dessas máquinas.
 
-Em seguida, será utilizado um cenário simples com 4 máquinas interligadas por um hub, havendo comunicação apenas entre 2 dessas máquinas. Os alunos irão discutir o motivo das duas outras máquinas não estarem se comunicando com as demais. A turma irá acompanhar um passo a passo utilizando comandos reais de Linux para a configuração do **Endereço IP** e **Máscara de sub-rede** com o objetivo de conectar as outras duas máquinas na rede. O programa **Wireshark** será utilizado para analisar datagramas IP que serão enviados entre as máquinas utilizando o protocolo **ICMP** (ping).
+![Representação da rede simulada no Experimento 1](/imagens/experimento1.jpg)
+
+Os alunos irão discutir o motivo das duas outras máquinas não estarem se comunicando com as demais. A turma irá acompanhar um passo a passo utilizando comandos reais de Linux para a configuração do **Endereço IP** e **Máscara de sub-rede** com o objetivo de conectar as outras duas máquinas na rede. O programa **Wireshark** será utilizado para analisar datagramas IP que serão enviados entre as máquinas utilizando o protocolo **ICMP** (ping).
 
 ### Experimento 2
 
-Para finalizar, utilizaremos um exemplo mais complexo que irá introduzir o conceito de **NAT**, onde os alunos irão configurar a conexão entre uma rede local e a internet. O programa ***Wireshark*** será utilizado em diversas etapas deste experimento para auxiliar na detecção dos problemas envolvidos na comunicação entre uma máquina com IP privado (rede local) e uma máquina com IP público (internet). Serão analisados as mensagens enviados entre as máquinas utilizando os protocolos **ICMP** de **ping** e **traceroute**.
+Para finalizar, utilizaremos um exemplo mais complexo que irá introduzir o conceito de **NAT**.
+
+![Representação da rede simulada no Experimento 2](/imagens/experimento2.jpg)
+
+Os alunos irão configurar a conexão entre uma rede local e a internet. O programa ***Wireshark*** será utilizado em diversas etapas deste experimento para auxiliar na detecção dos problemas envolvidos na comunicação entre uma máquina com IP privado (rede local) e uma máquina com IP público (internet). Serão analisados as mensagens enviados entre as máquinas utilizando os protocolos **ICMP** de **ping** e **traceroute**.
 
 ## Ambiente
 
@@ -113,6 +119,8 @@ Para verificar se sua instalação foi bem sucedida, execute:
     $ cd $NETKIT_HOME
     $ sh check_configuration.sh
 
+---
+
 ###  Experimento 1 *(HUB)*
 
 Este é um cenário simples com 4 máquinas interligadas por um hub, havendo comunicação apenas entre 2 dessas máquinas. O objetivo deste experimento é ambientá-lo com as ferramentas de simulação e de análise do tráfego da rede.
@@ -122,7 +130,7 @@ Este é um cenário simples com 4 máquinas interligadas por um hub, havendo com
 #### Executando a simulação
 
 1. Crie uma pasta em sua `/home/usuario/` com o nome **laboratorio**.
-2. Baixe o [experimento1.zip](/arquivos/experimento1.zip) e descompacte o arquivo dentro da pasta `/home/usuario/laboratorio`.
+2. Baixe o [experimento1.zip](/arquivos/experimento1.zip) e descompacte o arquivo dentro da pasta `/home/usuario/laboratorio/`.
 3. No terminal, entre na pasta **experimento1**:
 
         $ cd
@@ -177,7 +185,7 @@ Este é um cenário simples com 4 máquinas interligadas por um hub, havendo com
 
 1. Nós iremos coletar informações da interface das Máquinas 2 e 3. Para salvar os arquivos em sua máquina física, execute o comando a seguir nas máquinas 2 e 3:
 
-        # cd /hosthome/laboratorio/experimento1/
+        # cd /hosthome/laboratorio/
 
     ![Trocando o diretório na MAQUINA2](/imagens/experimento1b.png)
 
@@ -217,13 +225,15 @@ Este é um cenário simples com 4 máquinas interligadas por um hub, havendo com
 
     ![Finalizando a simulação com lcrash -F](/imagens/experimento1j.png)
 
-3. *NOTA* O netkit mantém o estado das máquinas virtuais nos arquivos **MAQUINAX.disk**, possibilitando a continuação da simulação em outro momento. Estes arquivos podem ser extremamente grandes por conflito entre as arquiteturas 32-bit e 64-bit.
+3. *NOTA* O netkit mantém o estado das máquinas virtuais nos arquivos **MAQUINAX.disk**, possibilitando a continuação da simulação em outro momento. Estes arquivos podem ser extremamente grandes devido ao conflito entre as arquiteturas 32-bit e 64-bit.
 
     ![Tamanho do arquivo MAQUINA1.disk](/imagens/experimento1k.png)
 
     Caso tenha concluído a simulação e não deseje manter o estado das máquinas, execute o comando `lclean`:
 
     ![Removendo os arquivos *.disk](/imagens/experimento1l.png)
+
+---
 
 ###  Experimento 2 *(NAT)*
 
